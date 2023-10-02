@@ -1,0 +1,28 @@
+# Node specific
+node_modules/
+npm-debug.log
+package-lock.json
+yarn.lock
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Editor folders and files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Dist / build directory
+/dist
+
+# MongoDB
+*.lock
+mongodump/
