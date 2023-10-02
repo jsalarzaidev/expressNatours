@@ -1,0 +1,28 @@
+{
+  "name": "atours",
+  "version": "1.0.0",
+  "description": "learning node, express and MongoDb",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsalarzaidev/expressNatours.git"
+  },
+  "keywords": [
+    "express"
+  ],
+  "author": "Jonas (instructor)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jsalarzaidev/expressNatours/issues"
+  },
+  "homepage": "https://github.com/jsalarzaidev/expressNatours#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
