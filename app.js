@@ -2,6 +2,11 @@ const fs = require('fs');
 const express = require('express');
 const app = express();
 
+// middleware
+// it is called **middleware** because it stands between **request** and **response**.
+app.use(express.json());
+
+//reading file from directory
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
@@ -28,6 +33,35 @@ app.get('/api/v1/tours', (req, res) => {
       tours,
     },
   });
+});
+
+app.post('/api/v1/tours', (req, res) => {
+  // require middleware
+
+  const newId = tours[tours.length - 1].id + 1;
+  const newTour = Object.assign(
+    {
+      id: newId,
+    },
+    req.body
+  );
+
+  tours.push(newTour);
+  fs.writeFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tours),
+    (err) => {
+      res.status(201).json({
+        status: 'success',
+        data: {
+          tour: newTour,
+        },
+      });
+    }
+  );
+
+  //console.log(req.body);
+  //res.send('Done'); // always need to send something in order to finish request response cycle.
 });
 
 // starting up a server
