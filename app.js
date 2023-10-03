@@ -4,7 +4,18 @@ const app = express();
 
 // middleware
 // it is called **middleware** because it stands between **request** and **response**.
-app.use(express.json());
+app.use(express.json()); //returns function added to middleware stack.
+
+//similarly we can create our own middleware function.
+app.use((req, res, next) => {
+  console.log('Hello from the middleware...');
+  next();
+});
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
 
 //reading file from directory
 const tours = JSON.parse(
@@ -12,8 +23,10 @@ const tours = JSON.parse(
 );
 
 const getAllTours = (req, res) => {
+  console.log(req.requestTime);
   res.status(200).json({
     status: 'success',
+    requestedAt: req.requestTime,
     results: tours.length,
     data: {
       tours,
