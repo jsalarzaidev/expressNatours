@@ -1,6 +1,12 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
+
 const app = express();
+
+// 1). MIDDLEWARES
+
+app.use(morgan('dev'));
 
 // middleware
 // it is called **middleware** because it stands between **request** and **response**.
@@ -12,6 +18,7 @@ app.use((req, res, next) => {
   next();
 });
 
+//creating your own middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
@@ -21,6 +28,8 @@ app.use((req, res, next) => {
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
+
+// 2). ROUTE HANDLERS
 
 const getAllTours = (req, res) => {
   console.log(req.requestTime);
@@ -126,6 +135,8 @@ const deleteTour = (req, res) => {
 // delete tour
 //app.delete('/api/v1/tours/:id', deleteTour);
 
+// 3.) ROUTES
+
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
 app
@@ -133,6 +144,8 @@ app
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
+
+// 4.) START SERVER
 
 // starting up a server
 // adding port to listen
