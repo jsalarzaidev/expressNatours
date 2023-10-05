@@ -15,7 +15,7 @@ app.use(morgan('dev'));
 // middleware
 // it is called **middleware** because it stands between **request** and **response**.
 app.use(express.json()); //returns function added to middleware stack.
-
+app.use(express.static(`${__dirname}/public`));
 //similarly we can create our own middleware function.
 app.use((req, res, next) => {
   console.log('Hello from the middleware...');
