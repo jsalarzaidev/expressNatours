@@ -4,6 +4,8 @@ const tourController = require('./../controllers/tourController');
 const router = express.Router();
 //Tour Routes
 
+router.param('id', tourController.checkID); // it will go through all middlewares in app.js
+
 router
   .route('/')
   .get(tourController.getAllTours)
