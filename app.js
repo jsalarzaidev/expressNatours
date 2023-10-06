@@ -9,8 +9,10 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
 // 1). MIDDLEWARES
-
-app.use(morgan('dev'));
+//console.log(process.env.NODE_ENV);
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 // middleware
 // it is called **middleware** because it stands between **request** and **response**.
