@@ -1,11 +1,29 @@
+const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+// will throw 'undefined' if it is above dotenv
+const app = require('./app');
 
 dotenv.config({
   path: './config.env',
 });
 
-// will throw 'undefined' if it is above dotenv
-const app = require('./app');
+const DB = process.env.DATABASE.replace(
+  '<PASSWORD>',
+  process.env.DATABASE_PASSWORD
+);
+
+// mongoose connection
+mongoose
+  .connect(DB, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+  })
+  .then((con) => {
+    //console.log(con.connections);
+    console.log('Database from MongoDB connection is successful!');
+  });
 
 /*
  * other stuff in this file such as
