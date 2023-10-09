@@ -25,42 +25,6 @@ mongoose
     console.log('Database from MongoDB connection is successful!');
   });
 
-// describing Schema
-const tourSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'A tour must have a price'], //validator
-    unique: true,
-  },
-  rating: {
-    type: Number,
-    default: 4.5,
-  },
-  price: {
-    type: Number,
-    required: [true, 'A tour must have a price'],
-  },
-});
-
-// always use Uppercase on Models and Variables
-const Tour = mongoose.model('Tour', tourSchema);
-
-// creating object out of a class. //prerequisite: Object Oriented Javascript.
-const testTour = new Tour({
-  name: 'Sarmad Gadget',
-  rating: 9.9,
-  price: 1999,
-});
-
-testTour
-  .save()
-  .then((doc) => {
-    console.log(doc);
-  })
-  .catch((err) => {
-    console.log('Error', err);
-  }); //save the document to the database.
-
 /*
  * other stuff in this file such as
  * database configurations, error handling or environmental
