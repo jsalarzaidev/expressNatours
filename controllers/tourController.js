@@ -1,17 +1,6 @@
 const Tour = require('./../models/tourModel');
 //reading file from directory
 
-// check body
-exports.checkBody = (req, res, next) => {
-  if (!req.body.name || !req.body.price) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Missing name or price',
-    });
-  }
-  next();
-};
-
 /*
  * Route Handlers for Tours
  */
@@ -42,16 +31,27 @@ exports.getTour = (req, res) => {
   // });
 };
 
-exports.createTour = (req, res) => {
-  res.status(201).json({
-    status: 'success',
-    // data: {
-    //   tour: newTour,
-    // },
-  });
+exports.createTour = async (req, res) => {
+  // const newTour = new Tour({ })
+  // newTour.save()
+  try {
+    const newTour = await Tour.create(req.body);
 
-  //console.log(req.body);
-  //res.send('Done'); // always need to send something in order to finish request response cycle.
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tour: newTour,
+      },
+    });
+
+    //console.log(req.body);
+    //res.send('Done'); // always need to send something in order to finish request response cycle.
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Invalid data sent!', // caution: do not add messages like this in production.
+    });
+  }
 };
 
 exports.updateTour = (req, res) => {
