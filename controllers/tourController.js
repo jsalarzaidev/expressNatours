@@ -60,7 +60,7 @@ exports.createTour = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: 'fail',
-      message: 'Invalid data sent!', // caution: do not add messages like this in production.
+      message: err, // caution: do not add messages like this in production.
     });
   }
 };
@@ -87,7 +87,7 @@ exports.updateTour = async (req, res) => {
 
 exports.deleteTour = async (req, res) => {
   try {
-    await Tour.findByIdAndDelete(req.params.id);
+    await Tour.findByIdAndDelete(req.params.id); // variable is not required because there is no need to send something back to client.
     res.status(204).json({
       // response for delete is 204 (no content)
       status: 'success',
