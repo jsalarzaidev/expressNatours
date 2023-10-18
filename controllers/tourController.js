@@ -1,5 +1,6 @@
 const Tour = require('./../models/tourModel');
 
+// Middleware in Action
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
   req.query.sort = '-ratingsAverage, price';
@@ -8,6 +9,42 @@ exports.aliasTopTours = (req, res, next) => {
 };
 
 //reading file from directory
+
+class APIFeatures {
+  constructor(query, queryString) {
+    // it gets automatically called as soon new object is created out of this class.
+    this.query = query;
+    this.queryString = queryString;
+  }
+
+  filter() {
+    const queryObj = { ...this.queryString };
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    // remove all the fields from queryObj
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    // 1B) Advanced Filtering
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    //console.log(JSON.parse(queryStr));
+
+    this.query.find(JSON.parse(queryStr));
+    // let query = Tour.find(JSON.parse(queryStr)); // this method will return a promise
+    return this;
+  }
+
+  sort() {
+    if (this.queryString.sort) {
+      const sortBy = this.queryString.sort.split(',').join(' ');
+      //console.log(sortBy);
+      this.query = this.query.sort(sortBy);
+      // sort('price ratingsAverage')
+    } else {
+      this.query = this.query.sort('-createdAt'); // decending order
+    }
+    return this;
+  }
+}
 
 /*
  * Route Handlers for Tours
@@ -18,27 +55,27 @@ exports.getAllTours = async (req, res) => {
     //BUILD QUERY
     // 1A) Filtering
     console.log(req.query);
-    const queryObj = { ...req.query };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    // remove all the fields from queryObj
-    excludedFields.forEach((el) => delete queryObj[el]);
+    // const queryObj = { ...req.query };
+    // const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    // // remove all the fields from queryObj
+    // excludedFields.forEach((el) => delete queryObj[el]);
 
-    // 1B) Advanced Filtering
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-    //console.log(JSON.parse(queryStr));
+    // // 1B) Advanced Filtering
+    // let queryStr = JSON.stringify(queryObj);
+    // queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    // //console.log(JSON.parse(queryStr));
 
-    let query = Tour.find(JSON.parse(queryStr)); // this method will return a promise
+    // let query = Tour.find(JSON.parse(queryStr)); // this method will return a promise
 
     // 2) Sorting
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      //console.log(sortBy);
-      query = query.sort(sortBy);
-      // sort('price ratingsAverage')
-    } else {
-      query = query.sort('-createdAt'); // decending order
-    }
+    // if (req.query.sort) {
+    //   const sortBy = req.query.sort.split(',').join(' ');
+    //   //console.log(sortBy);
+    //   query = query.sort(sortBy);
+    //   // sort('price ratingsAverage')
+    // } else {
+    //   query = query.sort('-createdAt'); // decending order
+    // }
 
     // 3) Field limiting
     if (req.query.fields) {
@@ -62,7 +99,10 @@ exports.getAllTours = async (req, res) => {
     }
 
     //EXECUTE QUERY
-    const tours = await query;
+    // goal: chain these methods one afte another.
+
+    const features = new APIFeatures(Tour.find(), req.query).filter().sort();
+    const tours = await features.query;
 
     res.status(200).json({
       status: 'success',

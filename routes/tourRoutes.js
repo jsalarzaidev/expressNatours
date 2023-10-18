@@ -6,6 +6,7 @@ const router = express.Router();
 
 //router.param('id', tourController.checkID); // it will go through all middlewares in app.js
 
+// aliasing: creating alias for complex queries
 router
   .route('/top-5-cheap')
   .get(tourController.aliasTopTours, tourController.getAllTours);
