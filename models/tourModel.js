@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
+
 const tourSchema = new mongoose.Schema(
   {
     name: {
@@ -7,6 +9,7 @@ const tourSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    slug: String,
     duration: {
       type: Number,
       required: [true, 'A tour must have a duration'],
@@ -67,6 +70,17 @@ tourSchema.virtual('durationWeeks').get(function () {
   // not part of database
   return this.duration / 7; // business logic
 });
+
+// Document OR save MIDDLEWARE:  Runs before .save() and .create()
+// tourSchema.pre('save', function (next) {
+//   this.slug = slugify(this.name, { lower: true });
+//   next();
+// });
+
+// tourSchema.post('save', function (doc, next) {
+//   console.log(doc);
+//   next();
+// });
 
 // always use Uppercase on Models and Variables
 const Tour = mongoose.model('Tour', tourSchema);
