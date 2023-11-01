@@ -55,6 +55,10 @@ const tourSchema = new mongoose.Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: {
@@ -81,6 +85,28 @@ tourSchema.virtual('durationWeeks').get(function () {
 //   console.log(doc);
 //   next();
 // });
+
+// QUERY MIDDLEWARE --> CONCEPT SKIPPED
+// tourSchema.pre('find', function(next) {
+tourSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+
+  this.start = Date.now();
+  next();
+});
+
+tourSchema.post(/^find/, function (docs, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
+  next();
+});
+
+// AGGREGATION MIDDLEWARE --> CONCEPT SKIPPED
+tourSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+
+  console.log(this.pipeline());
+  next();
+});
 
 // always use Uppercase on Models and Variables
 const Tour = mongoose.model('Tour', tourSchema);
