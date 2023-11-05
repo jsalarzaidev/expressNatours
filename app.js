@@ -19,10 +19,6 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json()); //returns function added to middleware stack.
 app.use(express.static(`${__dirname}/public`));
 //similarly we can create our own middleware function.
-app.use((req, res, next) => {
-  console.log('Hello from the middleware...');
-  next();
-});
 
 //creating your own middleware
 app.use((req, res, next) => {
@@ -32,5 +28,13 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+
+//handle all the verbs
+app.all('*', (req, res, next) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `Can't find ${req.originalUrl} on this server.`,
+  });
+});
 
 module.exports = app;
