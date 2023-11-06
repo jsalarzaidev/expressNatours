@@ -19,6 +19,12 @@ mongoose
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
+    /**
+     * (node:297940) [MONGODB DRIVER] Warning: Current Server Discovery and Monitoring engine is deprecated,
+     *  and will be removed in a future version.
+     *  To use the new Server Discover and Monitoring engine,
+     *  pass option { useUnifiedTopology: true } to the MongoClient constructor.
+     */
     useUnifiedTopology: true,
   })
   .then((con) => {
@@ -40,7 +46,15 @@ mongoose
 // starting up a server
 // adding port to listen
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   //passing port and a callback function
   console.log(`App running on port ${port}`);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.log('UNHANDLED REJECTION!!! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });
