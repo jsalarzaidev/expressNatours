@@ -1,6 +1,8 @@
 const Tour = require('./../models/tourModel');
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAysnc');
+const AppError = require('./../utils/appError');
+
 // Middleware in Action
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -38,6 +40,12 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
   // short end for => findbyId => Tour.findOne({_id: req.params.id})
+
+  //if tour ID did not matched.
+  if (!tour) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -62,6 +70,12 @@ exports.updateTour = catchAsync(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
+
+  //if tour ID did not matched.
+  if (!tour) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -71,7 +85,13 @@ exports.updateTour = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteTour = catchAsync(async (req, res, next) => {
-  await Tour.findByIdAndDelete(req.params.id); // variable is not required because there is no need to send something back to client.
+  const tour = await Tour.findByIdAndDelete(req.params.id); // variable is not required because there is no need to send something back to client.
+
+  //if tour ID did not matched.
+  if (!tour) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
+
   res.status(204).json({
     // response for delete is 204 (no content)
     status: 'success',
