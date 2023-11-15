@@ -47,6 +47,16 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+// instance method
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  // returns true if the password are the same else false.
+  // candidate password is not hashed but userPassword is
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
