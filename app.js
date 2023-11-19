@@ -24,6 +24,7 @@ app.use(express.static(`${__dirname}/public`));
 //creating your own middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
+  // console.log(req.headers); // Accessing HTTP headers
   next();
 });
 
