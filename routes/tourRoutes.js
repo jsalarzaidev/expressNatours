@@ -24,6 +24,10 @@ router
   .route('/:id')
   .get(tourController.getTour) // plugin added.
   .patch(tourController.updateTour)
-  .delete(tourController.deleteTour);
+  .delete(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'), // passing roles as parameters
+    tourController.deleteTour,
+  );
 
 module.exports = router;
