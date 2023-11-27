@@ -64,6 +64,7 @@ exports.login = catchAsync(async (req, res, next) => {
   });
 });
 
+// protect
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting Token and check if it exists.
   let token;
@@ -101,6 +102,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+// roles
 exports.restrictTo = (...roles) => {
   // restricting roles
   return (req, res, next) => {
@@ -113,3 +115,26 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
+
+//forgot password
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  // 1) Get user based on Posted email..
+  const user = await User.findOne({
+    email: req.body.email,
+  });
+
+  if (!user) {
+    return next(new AppError('There is no user with email address', 404));
+  }
+
+  // 2) Generate the random reset token
+  // for that generate instance document
+  const resetToken = user.createPasswordResetToken();
+  await user.save({
+    validateBeforeSave: false,
+  });
+  // 3) Send it to user's email
+});
+
+//reset password
+exports.resetPassword = (req, res, next) => {};

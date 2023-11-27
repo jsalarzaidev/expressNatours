@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
@@ -41,6 +42,8 @@ const userSchema = new mongoose.Schema({
     },
   },
   passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 userSchema.pre('save', async function (next) {
@@ -76,6 +79,26 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   }
   // FALSE means not changed.
   return false;
+};
+
+// instance method
+// createPasswordResetToken
+userSchema.methods.createPasswordResetToken = function () {
+  // it should be a random string but it doesnot have to be secure.
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  // this token is sent to the user to create new Password.
+  // only the user is going to use it.
+  // just like a password it is not good approach to store plain token into database.
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  // create a new `field` in database to store this resetToken.
+  // then compare it with the token that user provides.
+  console.log({ resetToken }, this.passwordResetToken);
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);
